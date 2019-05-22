@@ -1,10 +1,12 @@
 {:deps    {org.clojure/clojure     {:mvn/version "1.9.0"}
            org.clojure/spec.alpha  {:mvn/version "0.1.143"}
+           com.rpl/specter         {:mvn/version "1.1.1"}
            hodur/engine            {:mvn/version "0.1.6"}
            hodur/graphviz-schema   {:mvn/version "0.1.0"}
            hodur/datomic-schema    {:mvn/version "0.1.0"}
            hodur/visualizer-schema {:mvn/version "0.1.1"}
-           hodur/spec-schema       {:mvn/version "0.1.5"}}
+           hodur/spec-schema       {:mvn/version "0.1.5"}
+           cljfmt                  {:mvn/version "0.6.0"}}
  :paths   ["src"]
  :aliases {:dev {:extra-paths ["test" "dev/src"]
                  :extra-deps  {vvvvalvalval/scope-capture  {:mvn/version "0.3.1"}
