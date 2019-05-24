@@ -17,12 +17,15 @@
 ; generate specs and load them. since specs are global, do this as part of loading the namespace
 (eval (hodur-spec/schema fixtures/police-records))
 
-; this test proves that the generated specs work as expected
-(deftest specs
-  (s/describe ::person)
-  (is (nil? (s/explain-data ::person {:name "John"
-                                      :sex  "male"
-                                      :age  22}))))
+(s/describe ::person)
+
+; the specs match the fixtures
+(s/explain-data ::person {:name "John"
+                          :sex  "male"
+                          :age  22})
+
+(s/explain-data ::person {:name "John"
+                          :sex  "male"})
 
 ; spit out the generated code
 (let [generated-file "dev/src/hello_world/orm.cljc"
@@ -34,25 +37,23 @@
     generated-forms
     generated-file))
 
-; after the test runs, load the generated ns and then try the exprs below..
+; open and load the generated ns and then..
 
-(comment
+(defonce global-database
+         (d/create-conn {:name {:db/index true}}))
 
-  (defonce global-database
-           (d/create-conn {:name {:db/index true}}))
+(d/transact! global-database [{:name "John"
+                               :sex  "male"
+                               :age  22}])
 
-  (d/transact! global-database [{:name "John"
-                                 :sex  "male"
-                                 :age  22}])
+(->> (hello-world.orm/find-persons @global-database)
+     (s/valid? (s/coll-of ::person)))
 
-  (->> (hello-world.orm/find-persons @global-database)
-       (s/valid? (s/coll-of ::person)))
+(hello-world.orm/all-matching-persons-by-name @global-database
+                                              (let [s "Jo"]
+                                                (if (empty? s)
+                                                  (constantly true)
+                                                  #(re-find (re-pattern (str "(?i)" s)) %))))
 
-  (hello-world.orm/all-matching-persons-by-name @global-database
-                                                (let [s "Jo"]
-                                                  (if (empty? s)
-                                                    (constantly true)
-                                                    #(re-find (re-pattern (str "(?i)" s)) %))))
 
-  )
 
