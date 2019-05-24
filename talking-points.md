@@ -1,7 +1,14 @@
 ## Generating Clojure code using Hodor/Datascript
 
-- code generation is everywhere: macros, onegraph.com, clj aws client lib, cljc.java-time, etc
-- blog posts, libs (hodur), serene, graphql-code-generator.com
+- code generation is everywhere:
+    - macros
+    - onegraph.com
+    - clj aws client lib
+    - cljc.java-time
+    - serene
+    - graphql-code-generator.com
+    - Hodur
+- [Vals Blog Post](https://vvvvalvalval.github.io/posts/2018-07-23-datascript-as-a-lingua-franca-for-domain-modeling.html) got me started
 - lisp has an advantage over other target langs
 
 ### To the code

@@ -6,8 +6,8 @@ that generates cljc code that provides a simple ORM layer for a Datascript datab
 To drive this, explore the [test namespace](https://github.com/stevebuik/clj-code-gen-hodur/tree/master/test/orm)
 
 The fixtures sample data matches the domain entities used in
-[Alain's repo](https://github.com/alain-picard/clj-syd-datascript-and-reagent/blob/datascript-example/src/hello_world/app.cljs)
-since this presentation is designed to follow Alains.
+[Alains repo](https://github.com/alain-picard/clj-syd-datascript-and-reagent/blob/datascript-example/src/hello_world/app.cljs)
+since this presentation is designed to follow it.
 
 There is no slide-deck for this talk but there is another
 [markdown document](https://github.com/stevebuik/clj-code-gen-hodur/blob/master/talking-points.md)
