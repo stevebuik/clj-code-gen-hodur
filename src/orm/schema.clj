@@ -52,24 +52,26 @@
                     (pull-symbol entity)
                     (vec (fields entity)))))))
 
+(defn entity-query
+  [entity]
+  (let [query-without-conditions (apply-template '[pull-expr]
+                                                 '[:find (pull ?e pull-expr)
+                                                   :where]
+                                                 [(vec (fields entity))])
+        conditions (->> (fields entity)
+                        (map (fn [field]
+                               ['?e field (symbol (str "?" (name field)))])))]
+    (into query-without-conditions conditions)))
+
 (defn queries
   [schema]
   (->> schema
        (sort-by :type/camelCaseName)
        (map (fn [entity]
-              (let [query-without-conditions (apply-template '[pull-expr]
-                                                             '[:find (pull ?e pull-expr)
-                                                               :where]
-                                                             [(vec (fields entity))])
-                    conditions (->> (fields entity)
-                                    (map (fn [field]
-                                           ['?e field '_])))
-                    query (into query-without-conditions conditions)]
-                (apply-template '[q-sym query]
-                                '(def q-sym 'query)
-                                [(query-symbol entity) query]))))))
-
-
+              (apply-template '[q-sym query]
+                              '(def q-sym 'query)
+                              [(query-symbol entity)
+                               (entity-query entity-query)])))))
 
 (defn find-all-fns
   [schema]
@@ -85,16 +87,52 @@
                               [(symbol (str "find-" (name (:type/camelCaseName entity)) "s"))
                                (query-symbol entity)])))))
 
+(defn match-query
+  [entity]
+  (let [query-without-conditions (apply-template '[pull-expr]
+                                                 '[:find (pull ?e pull-expr)
+                                                   :in $ ?pred
+                                                   :where]
+                                                 [(vec (fields entity))])
+        conditions (->> (fields entity)
+                        (map (fn [field]
+                               ['?e field (symbol (str "?" (name field)))])))]
+    (into query-without-conditions conditions)))
+
+(defn match-fns
+  [schema]
+  (->> schema
+       (sort-by :type/camelCaseName)
+       (mapcat (fn [entity]
+                 (->> entity
+                      (select [:field/_parent ALL :field/camelCaseName])
+                      (map (fn [field]
+                             (let [fn-name (symbol (str "all-matching-" (name (:type/camelCaseName entity)) "s-by-" (name field)))
+                                   field-in-query (symbol (str "?" (name field)))
+                                   query (->> [(list '?pred field-in-query)]
+                                              (conj (match-query entity)))]
+                               (apply-template '[fn-name-sym query field]
+                                               '(defn fn-name-sym
+                                                  [db pred]
+                                                  (->> pred
+                                                       (d/q (quote query) db)
+                                                       (map first)
+                                                       (sort-by field)))
+                                               [fn-name
+                                                query
+                                                field])))))))))
+
 (defn reads
   [conn]
   (let [schema (orm-schema conn)
         pull-forms (pull-expressions schema)
         query-forms (queries schema)
-        find-forms (find-all-fns schema)]
+        find-forms (find-all-fns schema)
+        match-forms (match-fns schema)]
     (concat pull-forms
             query-forms
-            find-forms)))
-
+            find-forms
+            match-forms)))
 
 (defn- formatted
   [form]

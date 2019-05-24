@@ -18,7 +18,9 @@
 
     '[^{:datomic/tag-recursive  true
         :graphviz/tag-recursive true
-        :graphviz/color         "navajowhite1"}
+        :graphviz/color         "navajowhite1"
+        ; switch below to true to see offence entity code generated
+        :orm/tag-recursive      false}
       Offence
       [^String description]]
 
