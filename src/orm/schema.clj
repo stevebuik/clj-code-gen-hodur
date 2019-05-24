@@ -93,7 +93,7 @@
                                                  '[:find (pull ?e pull-expr)
                                                    :in $ ?pred
                                                    :where]
-                                                 [(vec (fields entity))])
+                                                 [(into [:db/id] (fields entity))])
         conditions (->> (fields entity)
                         (map (fn [field]
                                ['?e field (symbol (str "?" (name field)))])))]
