@@ -1,4 +1,4 @@
-## Generating Clojure code using Hodor/Datascript
+## Generating Clojure code using Hodur/Datascript
 
 - code generation is everywhere:
     - macros
@@ -10,6 +10,8 @@
     - Hodur
 - [Vals Blog Post](https://vvvvalvalval.github.io/posts/2018-07-23-datascript-as-a-lingua-franca-for-domain-modeling.html) got me started
 - lisp has an advantage over other target langs
+    - macro tooling is already built to do this
+    - most generated artifacts are EDN or cljc (less syntax variation)
 
 ### To the code
 
@@ -17,16 +19,20 @@
 - namespaced keys are important for specs and datomic, makes generation much easier when clashes always avoided
 This is not seen in this repo!
 
-### What did I learn:
+### Learnings:
 
-- could be a macro or generated at start-time but I prefer git/diffs
-- sorting is important for diffs
+- the more layers of the system can be described as data,
+the more they can be generated, both client and server side
+- could be loaded:
+    - at repl generating clj files for git / diffs (my pref)
+    - at system startup time, generation can occur and be loaded
+    - by macros which emit the forms generated
+- sorting is important if using diffs
 - specter is very useful
-- name generation should be separated for top level symbols.
+- name generation should be separate for all fns except lowest
     - design generators in phases where phase1 generates a map of names, symbols, keys etc
-    - then use this to generate code. hodur already does CSK for you
+    - then use this to generate code
+    - hodur helps by doing CSK for you
     - any re-usable names can be util fns
-- formatting is tricky. have bounced it off Daniel Compton to allow generated vs IDE formatters to match
-- what's not good in hodur
-    - real world has deeper needs e.g. sub-types
-    - tags don't make N subsets of schemas easy
+- formatting is tricky. would benefit from Daniel Comptons idea to make a new formatter
+
