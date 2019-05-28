@@ -71,7 +71,7 @@
               (apply-template '[q-sym query]
                               '(def q-sym 'query)
                               [(query-symbol entity)
-                               (entity-query entity-query)])))))
+                               (entity-query entity)])))))
 
 (defn find-all-fns
   [schema]

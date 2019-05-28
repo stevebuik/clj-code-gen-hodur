@@ -46,6 +46,10 @@
                                :sex  "male"
                                :age  22}])
 
+(d/transact! global-database [{:name "Paul"
+                               :sex  "male"
+                               :age  26}])
+
 (->> (hello-world.orm/find-persons @global-database)
      (s/valid? (s/coll-of ::person)))
 
